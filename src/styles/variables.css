@@ -1,0 +1,18 @@
+:root {
+  --bg-primary: #242424;
+  --goala-blue: #68b4f6;
+  --goala-blue-transparent: #68b4f650;
+  --goala-blue-darker: #3395eb;
+  --goala-blue-dark: #2077c4;
+  --goala-green: #1ecd68;
+  --goala-green-transparent: #1ecd6850;
+  --dashboard-gradient: radial-gradient(
+    50% 50% at 50% 50%,
+    var(--goala-blue) 0%,
+    var(--bg-primary) 100%
+  );
+  --white: #ffff;
+  --card-bg: #ffffff24;
+  --white-transparent: #ffffff50;
+  --goala-logo-shadow: 0 1px 10px #1ecd68;
+}
