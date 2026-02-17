@@ -31,11 +31,16 @@ export default function useTasks(date: Date) {
   }, [tasks]);
 
   const updateTask = (id: string, isCompleted: boolean) => {
-    console.log(":: task is updated");
     setTasks((prev) =>
-      prev.map((task) =>
-        task.id === id ? { ...task, isCompleted: isCompleted } : task
-      )
+      prev
+        .map((task) =>
+          task.id === id ? { ...task, isCompleted: isCompleted } : task,
+        )
+        .sort((a, b) => {
+          const aOrder = a.isCompleted ? 1 : 0;
+          const bOrder = b.isCompleted ? 1 : 0;
+          return aOrder - bOrder;
+        }),
     );
   };
 
