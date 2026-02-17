@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import checkIconSrc from "../../assets/icons/check.svg";
+import checkIconSrc from "../assets/icons/check.svg";
 
 interface CheckboxProps {
   isChecked: boolean;

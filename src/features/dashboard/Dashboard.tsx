@@ -1,5 +1,5 @@
 import Tasks from "../tasks/Tasks";
-import Logo from "../ui/Logo";
+import Logo from "../../ui/Logo";
 
 export default function Dashboard() {
   return (

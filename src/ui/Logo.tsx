@@ -1,5 +1,5 @@
 import { useState } from "react";
-import goalaLogoSrc from "../../assets/images/coala.png";
+import goalaLogoSrc from "../assets/images/coala.png";
 import clsx from "clsx";
 
 export default function Logo() {
@@ -19,14 +19,14 @@ export default function Logo() {
         className={clsx(
           "h-[200px] w-[200px] absolute",
           logoClasses,
-          showLogoClasses
+          showLogoClasses,
         )}
       />
       <h2
         className={clsx(
           "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-4xl font-bold text-(--goala-green) drop-shadow-(--goala-logo-shadow)",
           logoClasses,
-          showTextClasses
+          showTextClasses,
         )}
       >
         GOALA

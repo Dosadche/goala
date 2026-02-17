@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import useToggle from "../../hooks/useToggle";
 import type { TaskModel } from "../../interfaces/task";
-import Checkbox from "../ui/Checkbox";
 import TaskContextMenu from "./TaskContextMenu";
+import Checkbox from "../../ui/Checkbox";
 import clsx from "clsx";
 
 interface TaskProps {
@@ -33,7 +33,7 @@ export default function Task({
     setContextMenuPosition(() => {
       const left = Math.min(
         event.clientX,
-        window.innerWidth - CONTEXT_MENU_WIDTH
+        window.innerWidth - CONTEXT_MENU_WIDTH,
       );
       return {
         top: `${event.clientY}px`,
@@ -67,7 +67,7 @@ export default function Task({
         "w-full p-4 border rounded-[8px] cursor-pointer transition-colors",
         task.isCompleted
           ? "bg-(--goala-green-transparent) border-(--goala-green)"
-          : "bg-(--goala-blue-transparent) border-(--goala-blue)"
+          : "bg-(--goala-blue-transparent) border-(--goala-blue)",
       )}
     >
       <Checkbox
@@ -81,7 +81,7 @@ export default function Task({
         onClick={(event) => event.stopPropagation()}
         className={clsx(
           "absolute w-[90px]",
-          isContextMenuVisible ? "flex" : "hidden"
+          isContextMenuVisible ? "flex" : "hidden",
         )}
         style={contextMenuPosition}
       >

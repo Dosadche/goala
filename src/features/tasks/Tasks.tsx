@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Card from "../ui/Card";
+import Card from "../../ui/Card";
 import Task from "./Task";
 import TaskInput from "./TaskInput";
 import CalendarController from "./CalendarController";
@@ -23,10 +23,9 @@ export default function Tasks() {
                 <Task
                   key={task.id}
                   task={task}
-                  onStatusChange={(isCompleted) => {
-                    console.log(":: status change");
-                    updateTask(task.id, isCompleted);
-                  }}
+                  onStatusChange={(isCompleted) =>
+                    updateTask(task.id, isCompleted)
+                  }
                   onDeleteClick={() => deleteTask(task.id)}
                 />
               ))
