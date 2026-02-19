@@ -4,9 +4,16 @@ import Input from "../../ui/Input";
 import type { SignInForm } from "../../interfaces/sign-in-form.interface";
 import Button, { ButtonType } from "../../ui/Button";
 import { Link } from "react-router-dom";
+import { db } from "../../config/firebase.ts";
+import { collection, getDocs } from "firebase/firestore";
 
 export default function SignIn() {
   const { register, formState } = useForm<SignInForm>({ mode: "onChange" });
+
+  // TEMPORARY CODE
+  const tasksColRef = collection(db, "tasks");
+  // TEMPORARY CODE
+
   return (
     <section className="w-screen h-screen flex items-center justify-center">
       <Card>
@@ -42,6 +49,16 @@ export default function SignIn() {
             </p>
             <Button type={ButtonType.Secondary}>Confirm</Button>
           </div>
+          <button
+            onClick={async () => {
+              const collData = (await getDocs(tasksColRef)).docs?.map(
+                (doc) => ({ ...doc.data(), id: doc.id }),
+              );
+              console.log(":: colData", collData);
+            }}
+          >
+            Get Tasks
+          </button>
         </div>
       </Card>
     </section>
