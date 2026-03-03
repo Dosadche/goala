@@ -2,5 +2,6 @@ export interface TaskModel {
   id: string;
   title: string;
   isCompleted: boolean;
-  createdAt?: string;
+  date?: string; // YYYY-MM-DD
+  userId: string;
 }

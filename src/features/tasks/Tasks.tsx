@@ -128,7 +128,7 @@ export default function Tasks() {
           )}
         </div>
       </Card>
-      <TaskInput onSubmit={(taskText) => addTask(taskText)} />
+      <TaskInput onSubmit={(taskText) => addTask(taskText, date)} />
       <div
         role="menu"
         tabIndex={0}
