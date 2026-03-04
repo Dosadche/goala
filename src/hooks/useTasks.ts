@@ -5,7 +5,7 @@ import {
   collection,
   deleteDoc,
   doc,
-  getDocs,
+  onSnapshot,
   query,
   updateDoc,
   where,
@@ -18,65 +18,40 @@ export default function useTasks(date: Date) {
   const tasksColRef = useMemo(() => collection(db, "tasks"), []);
 
   useEffect(() => {
-    const loadTasks = async () => {
-      console.log(formatDate(date));
-      const q = query(tasksColRef, where("date", "==", formatDate(date)));
-      const tasks = (await getDocs(q)).docs.map(
-        (doc) =>
-          ({
-            ...doc.data(),
-            id: doc.id,
-          }) as TaskModel,
+    const q = query(tasksColRef, where("date", "==", formatDate(date)));
+    const loadTasks = onSnapshot(q, (snapshot) => {
+      const tasks = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      })) as TaskModel[];
+      setTasks(
+        [...tasks].sort((a, b) => {
+          const aOrder = a.isCompleted ? 1 : 0;
+          const bOrder = b.isCompleted ? 1 : 0;
+          return aOrder - bOrder;
+        }),
       );
-      setTasksList(tasks);
-    };
-    loadTasks();
-  }, [date]);
+    });
+    return loadTasks;
+  }, [date, tasksColRef]);
 
   const addTask = async (taskText: string, date: Date) => {
-    const newTask = {
+    await addDoc(tasksColRef, {
       title: taskText,
       isCompleted: false,
       userId: "",
       date: formatDate(date),
-    };
-    const newTaskRef = await addDoc(tasksColRef, newTask);
-    const updatedTasksList = [
-      {
-        ...newTask,
-        id: newTaskRef.id,
-      },
-      ...tasks,
-    ];
-    setTasksList(updatedTasksList);
+    });
   };
 
   const updateTask = async (id: string, isCompleted: boolean) => {
-    const taskReference = doc(tasksColRef, id);
-    await updateDoc(taskReference, {
+    await updateDoc(doc(tasksColRef, id), {
       isCompleted,
     });
-    const updatedTasksList = tasks.map((task) =>
-      task.id === id ? { ...task, isCompleted: isCompleted } : task,
-    );
-    setTasksList(updatedTasksList);
   };
 
   const deleteTask = async (id: string) => {
-    const taskReference = doc(tasksColRef, id);
-    await deleteDoc(taskReference);
-    const updatedTasksList = tasks.filter((task) => task.id !== id);
-    setTasksList(updatedTasksList);
-  };
-
-  const setTasksList = (tasks: TaskModel[]) => {
-    setTasks(
-      tasks.sort((a, b) => {
-        const aOrder = a.isCompleted ? 1 : 0;
-        const bOrder = b.isCompleted ? 1 : 0;
-        return aOrder - bOrder;
-      }),
-    );
+    await deleteDoc(doc(tasksColRef, id));
   };
 
   return { tasks, addTask, updateTask, deleteTask };
