@@ -12,6 +12,7 @@ import {
   type Firestore,
   type UpdateData,
 } from "firebase/firestore";
+import type { FirestoreEntity } from "../interfaces/firestore-entity.type";
 
 export default function createFirestoreService<T extends DocumentData>(
   db: Firestore,
@@ -21,7 +22,7 @@ export default function createFirestoreService<T extends DocumentData>(
   return {
     subscribe(
       constraints: QueryConstraint[],
-      callback: (data: (T & { id: string })[]) => void,
+      callback: (data: FirestoreEntity<T>[]) => void,
     ) {
       const q = query(colRef, ...constraints);
       return onSnapshot(q, (snapshot) => {
