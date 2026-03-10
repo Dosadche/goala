@@ -1,5 +1,5 @@
 import type { TaskModel } from "../../interfaces/task";
-import Checkbox from "../ui/Checkbox";
+import Checkbox from "../../ui/Checkbox";
 import clsx from "clsx";
 
 interface TaskProps {

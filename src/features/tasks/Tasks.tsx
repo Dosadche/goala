@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Card from "../ui/Card";
+import Card from "../../ui/Card";
 import Task from "./Task";
 import TaskInput from "./TaskInput";
 import CalendarController from "./CalendarController";
@@ -8,6 +8,9 @@ import { animated, SpringValue, useTransition } from "react-spring";
 import clsx from "clsx";
 import TaskContextMenu from "./TaskContextMenu";
 import type { TaskModel } from "../../interfaces/task";
+import { formatDate } from "../../utils/formatDate";
+import type { FirestoreEntity } from "../../interfaces/firestore-entity.type";
+import Loading from "../../ui/Loading";
 
 interface ContextMenu {
   position: {
@@ -23,14 +26,15 @@ export default function Tasks() {
   const CONTEXT_MENU_WIDTH = 90;
   const TASK_ITEM_HEIGHT = 65.81;
   const [date, setDate] = useState<Date>(new Date());
-  const { tasks, addTask, updateTask, deleteTask } = useTasks(date);
+  const { tasks, createTask, updateTask, deleteTask, isLoading } =
+    useTasks(date);
   const contextMenuRef = useRef<HTMLDivElement>(null);
   const [contextMenu, setContextMenu] = useState<ContextMenu | null>(null);
   const transitions = useTransition<
-    { task: TaskModel; y: number },
+    { task: FirestoreEntity<TaskModel>; y: number },
     { y: SpringValue<number>; opacity: SpringValue<number> }
   >(
-    tasks.map((task: TaskModel, index: number) => ({
+    tasks.map((task: FirestoreEntity<TaskModel>, index: number) => ({
       task,
       y: index * TASK_ITEM_HEIGHT,
     })),
@@ -115,7 +119,7 @@ export default function Tasks() {
                 <Task
                   task={task}
                   onStatusChange={(isCompleted) =>
-                    updateTask(task.id, isCompleted)
+                    updateTask(task.id, { isCompleted })
                   }
                   onContextMenuClick={(event: React.MouseEvent) =>
                     handleContextMenuClick(task.id, event)
@@ -128,7 +132,16 @@ export default function Tasks() {
           )}
         </div>
       </Card>
-      <TaskInput onSubmit={(taskText) => addTask(taskText)} />
+      <TaskInput
+        onSubmit={(taskText) =>
+          createTask({
+            title: taskText,
+            isCompleted: false,
+            date: formatDate(date),
+            userId: "",
+          })
+        }
+      />
       <div
         role="menu"
         tabIndex={0}
@@ -139,6 +152,7 @@ export default function Tasks() {
       >
         <TaskContextMenu onDeleteClick={handleDeleteTaskClicked} />
       </div>
+      {isLoading && <Loading />}
     </div>
   );
 }

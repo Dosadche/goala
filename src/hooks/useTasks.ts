@@ -1,66 +1,30 @@
-import { useEffect, useRef, useState } from "react";
+import createFirestoreService from "../services/firestore-service";
+import { db } from "../config/firebase";
+import useFirestoreCollection from "./useFirestoreCollection";
+import { where } from "firebase/firestore";
 import type { TaskModel } from "../interfaces/task";
 import { formatDate } from "../utils/formatDate";
+import type { FirestoreEntity } from "../interfaces/firestore-entity.type";
+
+const taskService = createFirestoreService<TaskModel>(db, "tasks");
 
 export default function useTasks(date: Date) {
-  const [tasks, setTasks] = useState<TaskModel[]>([]);
-  const isHydratingRef = useRef(true);
-
-  useEffect(() => {
-    isHydratingRef.current = true;
-    const formattedDate = formatDate(date);
-    const rawTasks = localStorage.getItem(formattedDate);
-    if (!rawTasks) {
-      setTasks([]);
-      return;
-    }
-    try {
-      setTasks(JSON.parse(rawTasks));
-    } catch {
-      setTasks([]);
-    }
-  }, [date]);
-
-  useEffect(() => {
-    if (isHydratingRef.current) {
-      isHydratingRef.current = false;
-      return;
-    }
-    const key = formatDate(date);
-    localStorage.setItem(key, JSON.stringify(tasks));
-  }, [tasks]);
-
-  const updateTask = (id: string, isCompleted: boolean) => {
-    setTasks((prev) =>
-      prev
-        .map((task) =>
-          task.id === id ? { ...task, isCompleted: isCompleted } : task,
-        )
-        .sort((a, b) => {
-          const aOrder = a.isCompleted ? 1 : 0;
-          const bOrder = b.isCompleted ? 1 : 0;
-          return aOrder - bOrder;
-        }),
-    );
+  const { data: tasks, isLoading } = useFirestoreCollection<TaskModel>(
+    taskService,
+    [where("date", "==", formatDate(date))],
+    (tasks: FirestoreEntity<TaskModel>[]) => {
+      return [...tasks].sort((a, b) => {
+        const aOrder = a.isCompleted ? 1 : 0;
+        const bOrder = b.isCompleted ? 1 : 0;
+        return aOrder - bOrder;
+      });
+    },
+  );
+  return {
+    tasks,
+    isLoading,
+    createTask: taskService.create,
+    deleteTask: taskService.delete,
+    updateTask: taskService.update,
   };
-
-  const addTask = (taskText: string) => {
-    setTasks((prev) => {
-      const updatedTasks = [
-        {
-          id: crypto.randomUUID(),
-          title: taskText,
-          isCompleted: false,
-        },
-        ...prev,
-      ];
-      return updatedTasks;
-    });
-  };
-
-  const deleteTask = (id: string) => {
-    setTasks((prev) => prev.filter((task) => task.id !== id));
-  };
-
-  return { tasks, addTask, updateTask, deleteTask };
 }
