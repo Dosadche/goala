@@ -10,6 +10,7 @@ import TaskContextMenu from "./TaskContextMenu";
 import type { TaskModel } from "../../interfaces/task";
 import { formatDate } from "../../utils/formatDate";
 import type { FirestoreEntity } from "../../interfaces/firestore-entity.type";
+import Loading from "../../ui/Loading";
 
 interface ContextMenu {
   position: {
@@ -25,7 +26,8 @@ export default function Tasks() {
   const CONTEXT_MENU_WIDTH = 90;
   const TASK_ITEM_HEIGHT = 65.81;
   const [date, setDate] = useState<Date>(new Date());
-  const { tasks, createTask, updateTask, deleteTask } = useTasks(date);
+  const { tasks, createTask, updateTask, deleteTask, isLoading } =
+    useTasks(date);
   const contextMenuRef = useRef<HTMLDivElement>(null);
   const [contextMenu, setContextMenu] = useState<ContextMenu | null>(null);
   const transitions = useTransition<
@@ -150,6 +152,7 @@ export default function Tasks() {
       >
         <TaskContextMenu onDeleteClick={handleDeleteTaskClicked} />
       </div>
+      {isLoading && <Loading />}
     </div>
   );
 }
